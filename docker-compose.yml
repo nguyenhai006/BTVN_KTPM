@@ -1,0 +1,21 @@
+
+services:
+  juiceshop:
+    image: bkimminich/juice-shop:latest
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+
+  waf:
+    image: owasp/modsecurity-crs:nginx
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      BACKEND: "http://juiceshop:3000"
+      PORT: "8080"
+      MODSEC_RULE_ENGINE: "On"
+      BLOCKING_PARANOIA: "1"
+      ANOMALY_INBOUND: "5"
+    depends_on:
+      - juiceshop
+    restart: unless-stopped
